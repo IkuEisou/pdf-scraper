@@ -59,21 +59,23 @@ def extractPDF2Text(filename):
 
 def extractTables(filename, page):
     tables = camelot.read_pdf(filename, pages=page,
-                              #   flavor='stream',
+                              # flavor='stream',
                               #   strip_text=' .\n'
                               )
     for table in tables:
         df = table.df
-        print(table.df)
         headers = df[0][0].split('\n')
-        hasEmptyHeader = False
-        if len(headers) > 0:
-            for col in range(0, len(df.columns)):
-                if df[col][0] == '':
-                    df[col][0] = headers[col]
-                    hasEmptyHeader = True
-            if hasEmptyHeader == True:
-                df[0][0] = headers[0]
+        header_len = len(headers)
+        col_len = len(df.columns)
+        if header_len > col_len:
+            for i in range(col_len, header_len):
+                headers[i % col_len] += headers[i]
+            headers = headers[0:col_len]
+        if header_len > 0:
+            for col in range(0, col_len):
+                if col > 0 and df[col][0] != '':
+                    df[col][1] = df[col][0]
+                df[col][0] = headers[col]
 
     output = filename.split('.')[0]
     # export all tables at once to CSV files
@@ -112,8 +114,8 @@ def main(argv):
         filename = inputfile.split('/')[-1]
     else:
         filename = outputfile
-    # downloadFile(inputfile, filename)
-    # decryptPDF(filename)
+    downloadFile(inputfile, filename)
+    decryptPDF(filename)
     extractTables(filename, page)
 
 
