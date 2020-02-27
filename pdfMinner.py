@@ -71,7 +71,7 @@ def extractTables(filename, page):
             for i in range(col_len, header_len):
                 headers[i % col_len] += headers[i]
             headers = headers[0:col_len]
-        if header_len > 0:
+        if header_len > 1:
             for col in range(0, col_len):
                 if col > 0 and df[col][0] != '':
                     df[col][1] = df[col][0]
@@ -79,13 +79,13 @@ def extractTables(filename, page):
 
     output = filename.split('.')[0]
     # export all tables at once to CSV files
-    tables.export(output+".csv", f="csv")
+    # tables.export(output+".csv", f="csv")
 
     # export all tables at once to CSV files in a single zip
     # tables.export("camelot_tables.csv", f="csv", compress=True)
 
     # export each table to a separate worksheet in an Excel file
-    # tables.export(output+'.xlsx', f="excel")
+    tables.export(output+'.xlsx', f="excel")
 
 
 def main(argv):
